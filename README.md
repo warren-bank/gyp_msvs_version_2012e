@@ -32,6 +32,7 @@ comments related to project goals:
 ----------------------------------
   * gyp (and node-gyp) also require Python 2.7
     This dependency is easily met by downloading:
+
         http://sourceforge.net/projects/pythonstdalone/
         http://sourceforge.net/projects/pythonstdalone/files/python_27_standalone_complete_v_1_r_2011_07_01.7z/download
 
@@ -41,6 +42,7 @@ in summary:
   * I'm just a software developer who:
       - prefers to work in a Windows environment
       - recently needed to "npm" a node module that threw the error:
+
             MSBUILD : error MSB3428: Could not load the Visual C++ component "VCBuild.exe".
             To fix this,
                 1) install the .NET Framework 2.0 SDK,
@@ -54,9 +56,11 @@ in summary:
           - the error message says to use VS2005.
             I did that, and the build failed.
             Digging a little deeper:
+
                 .\nodejs\node_modules\npm\node_modules\node-gyp\gyp\pylib\gyp\MSVSVersion.py
             reveals that VS2012 Express is (currently) the most recent version supported.
           - per the installation notes:
+
                 https://github.com/TooTallNate/node-gyp#installation
             VS2012 Express (for Windows Desktop) is the only version that supports both Windows 7 and 8.
       - wants to share the end product with other developers who find themselves in the same predicament..
@@ -66,24 +70,30 @@ in summary:
 installation notes:
 -------------------
   * extract the contents of the archive using 7-zip:
+
         http://portableapps.com/apps/utilities/7-zip_portable
     to anywhere you like.
     (for "usage" below, lets say that we'll assign this path to the variable: gyp_msvs_version_2012e)
   * there are 2 top-level directories:
       - dependencies
+
             This directory contains everything.
       - [tests]
+
             This directory contains a few tests that I wrote to confirm proper functionality.
             You can safely delete this.
 
 usage:
 ------
   * Visual C++ (only)
+
         call "%gyp_msvs_version_2012e%\dependencies\_environment\vc_vars_32.bat"
 	now:
+
       - %VisualStudioVersion%, %INCLUDE%, %LIB%, %LIBPATH% (and many other environment variables) are properly set
       - %PATH% includes cl.exe and link.exe
   * Visual C++ and MSBuild
+
         call "%gyp_msvs_version_2012e%\dependencies\_environment\vc_vars_32.bat"
         call "%gyp_msvs_version_2012e%\dependencies\_environment\msbuild_vars_32.bat"
     now:
@@ -91,14 +101,17 @@ usage:
       - assuming that %PATH% also includes Python 2.7,
         all of gyp (and node-gyp) dependencies are now satisfied.
   * personally, I added a file:
+
         .\nodejs\nodevars.node-gyp.bat
     that contains:
+
         set PATH=%PATH%;%~dp0..\python\2.7\complete
         call "%~dp0..\visual_studio_express_2012\dependencies\_environment\vc_vars_32.bat"
         call "%~dp0..\visual_studio_express_2012\dependencies\_environment\msbuild_vars_32.bat"
         set GYP_MSVS_VERSION=2012e
         set node_gyp="%~dp0node.exe" "%~dp0node_modules\npm\node_modules\node-gyp\bin\node-gyp.js"
     which assumes the directory structure:
+
         .\nodejs
         .\nodejs\node.exe
         .\nodejs\node_modules\npm\node_modules\node-gyp
@@ -106,15 +119,19 @@ usage:
         .\visual_studio_express_2012\dependencies
     obviously, you can customize as you see fit..
   * within the same shell:
+
         npm install XYZ
     assuming, of course, that npm is in your %PATH%.
     otherwise, you may want to do something like:
       - add/edit the file:
+
             .\nodejs\nodevars.bat
         with the commands:
+
             set NODE_PATH=%cd%;%~dp0node_modules;%~dp0node_modules\npm\node_modules
             set npm="%~dp0node.exe" "%~dp0node_modules\npm\bin\npm-cli.js"
       - then to use npm:
+
             call .\nodejs\nodevars.bat
             call .\nodejs\nodevars.node-gyp.bat
             %npm% install XYZ
